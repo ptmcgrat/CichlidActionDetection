@@ -97,8 +97,6 @@ class Cluster_calculator:
 			elif self.framerate*t - delta_t < 0 or LID == -1:
 				continue
 			# Check temporal compatability (part b):
-			elif time < self.lightsOnTime or time > self.lightsOffTime:
-				continue
 			else:
 				clusterData.loc[clusterData.index == LID,'ClipCreated'] = 'Yes'
 				if N < self.args.ML_videos_small_limit:
