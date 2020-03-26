@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys, pdb, datetime
-from HMMAnalyzer import HMMAnalyzer as HA
 
 class HMMAnalyzer:
 	def __init__(self, filebase):
