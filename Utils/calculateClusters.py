@@ -62,7 +62,7 @@ class Cluster_calculator:
 
 		print()
 		# Concatenate and save information
-		sortData[:,0] = sortData[:,0]/self.timeScale
+		sortData[:,0] = sortData[:,0]/self.args.Cl_timescale
 		labeledCoords = np.concatenate((sortData, labels), axis = 1).astype('int64')
 		np.save(self.args.Cl_labeled_transition_filename, labeledCoords)
 		print('  Concatenating and summarizing clusters,,Time: ' + str(datetime.datetime.now())) 
