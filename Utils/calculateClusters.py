@@ -113,7 +113,7 @@ class Cluster_calculator:
 	def _createAnnotationVideos(self):
 		hmmObj = HA(self.args.HMM_filename)
 		delta_xy = self.args.ML_videos_delta_xy
-		delta_t = self.args.ML_videos_delta_t
+		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
 
 		print('  Creating small video clips for classification,,Time: ' + str(datetime.datetime.now())) 
 
@@ -125,7 +125,7 @@ class Cluster_calculator:
 		for row in self.clusterData[self.clusterData.ClipCreated == 'Yes'].itertuples():
 			LID, N, t, x, y = [str(x) for x in [row.Index, row.N, row.t, row.X, row.Y]]
 			outName = self.args.Cl_videos_directory + row.ClipName + '.mp4'
-			command = ['python3', 'createClip.py', self.args.Movie_file, 
+			command = ['python3', 'Utils/createClip.py', self.args.Movie_file, 
 						outName, str(delta_xy), str(delta_t), str(self.framerate)]
 			processes.append(subprocess.Popen(command))
 			if len(processes) == self.workers:
