@@ -51,7 +51,6 @@ class HMMAnalyzer:
 
 		allCoords = self.data[~np.isin(self.data[:,0], badTimes)][:,[0,3,4,5]].astype('uint64')
 			
-		allCoords = allCoords[allCoords[:,3]].copy()
 		#print('DBScanMatrixCreation: ' + str(allCoords.shape[0]) + ' HMM transitions passed magnitude and density filtering criteria', file = sys.stderr)
 		return allCoords
 
