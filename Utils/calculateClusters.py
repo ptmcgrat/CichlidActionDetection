@@ -52,8 +52,6 @@ class Cluster_calculator:
 			min_time, max_time = i*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600, (i+1)*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600 # Have to deal with rescaling of time. 3600 = # seconds in an hour
 			hour_range = np.where((sortData[:,0] > min_time) & (sortData[:,0] <= max_time))
 			min_index, max_index = hour_range[0][0], hour_range[0][-1] + 1
-			#pdb.set_trace()
-			pdb.set_trace()
 			X = NearestNeighbors(radius=self.args.Cl_tree_radius, metric='minkowski', p=2, algorithm='kd_tree',leaf_size=self.args.Cl_leaf_num,n_jobs=int(self.workers/2)).fit(sortData[min_index:max_index])
 			dist = X.radius_neighbors_graph(sortData[min_index:max_index], self.args.Cl_tree_radius, 'distance')
 			sub_label = DBSCAN(eps=self.args.Cl_eps, min_samples=self.args.Cl_min_points, metric='precomputed', n_jobs=int(self.workers/2)).fit_predict(dist)

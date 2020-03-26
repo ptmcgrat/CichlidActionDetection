@@ -43,7 +43,6 @@ class HMMAnalyzer:
 
 		#print('DBScanMatrixCreation: ' + str(self.data.shape[0] - self.width*self.height) + ' raw transitions are found in the entire video', file = sys.stderr)
 		
-		pdb.set_trace()
 		#Threshold out timepoints that have too many changes
 		time, counts = np.unique(self.data[:,0], return_counts = True)
 		threshold = counts[0]*densityFilter/100 # This excludes frames where too many pixels are changing in a frame (i.e. lighting changes)
