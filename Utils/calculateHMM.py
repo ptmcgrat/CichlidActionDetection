@@ -1,7 +1,6 @@
-import argparse, os, cv2, math
+import argparse, os, cv2, math, datetime, subprocess, pdb
 import numpy as np
 from HMMAnalyzer import HMMAnalyzer as HA
-
 
 class HMM_calculator:
 	def __init__(self, args):
@@ -10,15 +9,16 @@ class HMM_calculator:
 		self.output_directory = self.args.HMM_temp_directory # Rename to make more readable
 
 		self.row_command_arguments = []
-		for key, value in args.items():
+		for key, value in vars(args).items():
 			if 'HMM' in key:
 				if 'filename' not in key and 'directory' not in key and 'time' not in key and 'blocksize' not in key:
 					self.row_command_arguments.extend(['--' + key, str(value)])
 
-		self._validateVideo()
-		self._decompressVideo()
-		self._calculateHMM()
-		self._createCoordinateFiles()
+	def calculateHMM(self):
+		#self._validateVideo()
+		#self._decompressVideo()
+		#self._calculateHMM()
+		self._createCoordinateFile()
 
 	def _validateVideo(self):
 		cap = cv2.VideoCapture(self.args.Movie_file)
@@ -26,12 +26,22 @@ class HMM_calculator:
 		self.width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 		self.framerate = int(cap.get(cv2.CAP_PROP_FPS))
 		self.frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-		self.HMMsecs = int(self.frames/self.framerate)
+
+		if self.args.Filter_start_time is not None:
+			self.start_time = int((self.args.Filter_start_time - self.self.args.Video_start_time).total_seconds())
+		else:
+			self.start_time = 0
+		if self.args.Filter_end_time is not None:
+			self.stop_time = int((self.args.Filter_end_time - self.self.args.Video_start_time).total_seconds())
+		else:
+			self.stop_time = int(self.frames/self.framerate) - 1
+
+		self.HMMsecs = int(self.stop_time - self.start_time + 1)
 		cap.release()
 
 	def _decompressVideo(self):
 
-		blocksize = self.args.HMM_blocksize # Rename to make code easier to read
+		blocksize = self.args.HMM_blocksize*60 # Rename to make code easier to read. 
 
 		totalBlocks = math.ceil(self.HMMsecs/(blocksize)) #Number of blocks that need to be analyzed for the full video
 		print('  HMM_Maker:Decompressing video into 1 second chunks,,Time: ' + str(datetime.datetime.now()))
@@ -44,14 +54,14 @@ class HMM_calculator:
 			for j in range(self.workers):
 				if i + j >= totalBlocks:
 					break
-				min_time = int((i+j)*blocksize)
-				max_time = int(min((i+j+1)*blocksize, self.HMMsecs))
+				min_time = self.start_time + int((i+j)*blocksize)
+				max_time = self.start_time + int(min((i+j+1)*blocksize, self.HMMsecs))
 				
 				if max_time < min_time:
 					pdb.set_trace()
 
 				arguments = [self.args.Movie_file, str(self.framerate), str(min_time), str(max_time), self.output_directory + 'Decompressed_' + str(i+j) + '.npy']
-				processes.append(subprocess.Popen(['python3', 'Decompress_block.py'] + arguments))
+				processes.append(subprocess.Popen(['python3', 'Utils/Decompress_block.py'] + arguments))
 			
 			for p in processes:
 				p.communicate()
@@ -80,7 +90,6 @@ class HMM_calculator:
 				if os.path.isfile(row_file):
 					out_data = np.concatenate([np.load(row_file),out_data], axis = 1)
 				np.save(row_file, out_data)
-
 				# Verify size is right
 				if block + 1 == totalBlocks:
 					try:
@@ -105,7 +114,7 @@ class HMM_calculator:
 			print(str(start_row) + '-' + str(stop_row - 1) + ',', end = '', flush = True)
 			processes = []
 			for row in range(start_row, stop_row):
-				processes.append(subprocess.Popen(['python3', 'HMM_row.py', '--Rowfile', self.output_directory + str(row) + '.npy'] + self.row_command_arguments))
+				processes.append(subprocess.Popen(['python3', 'Utils/HMM_row.py', '--Rowfile', self.output_directory + str(row) + '.npy'] + self.row_command_arguments))
 			for p in processes:
 				p.communicate()
 		print()
@@ -116,6 +125,10 @@ class HMM_calculator:
 			subprocess.run(['rm', '-f', self.output_directory + str(row) + '.hmm.npy'])
 		out_data = np.concatenate(all_data, axis = 0)
 
+		# Correct start time and end time
+		out_data[:,0] += self.start_time
+		out_data[:,1] += self.start_time
+
 		# Save npy and txt files for future use
 		np.save(self.args.HMM_filename + '.npy', out_data)
 		with open(self.args.HMM_filename + '.txt', 'w') as f:
@@ -123,9 +136,10 @@ class HMM_calculator:
 			print('Height: ' + str(self.height), file = f)
 			print('Frames: ' + str(int(self.HMMsecs*self.framerate)), file = f)
 			print('FrameRate: ' + str(int(self.framerate)), file = f)
-			print('StartTime: ' + str(int(self.args.video_start_time)), file = f)
-			for key, value in self.args:
-				print(key + ': ' + str(value))
+			print('StartTime: ' + str(self.args.Video_start_time), file = f)
+			for key, value in vars(self.args).items():
+				if value is not None:
+					print(key + ': ' + str(value), file = f)
 
 	def _createCoordinateFile(self):
 		print('  Creating coordinate file from HMM transitions,,Time: ' + str(datetime.datetime.now())) 
@@ -134,7 +148,7 @@ class HMM_calculator:
 		hmmObj = HA(self.args.HMM_filename)
 
 		# Convert into coords object and save it
-		coords = hmmObj.retDBScanMatrix(self.args.HMM_start_time, self.args_HMM_end_time)
+		coords = hmmObj.retDBScanMatrix()
 		np.save(self.args.HMM_transition_filename, coords)
 
 
@@ -151,13 +165,14 @@ parser.add_argument('--HMM_filename', type = str, required = True, help = 'Basen
 parser.add_argument('--HMM_transition_filename', type = str, required = True, help = 'Name of npy file containing all transitions with associated magnitude')
 
 # Parameters to filter when HMM is run on
-parser.add_argument('--video_start_time', type=datetime.datetime.fromisoformat, required = True, help = 'Required argument that indicates the start time of the video')
-parser.add_argument('--HMM_start_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the HMM should be run')
-parser.add_argument('--HMM_end_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the HMM should be run')
+parser.add_argument('--VideoID', type=str, required = True, help = 'Required argument that gives a short ID for the video')
+parser.add_argument('--Video_start_time', type=datetime.datetime.fromisoformat, required = True, help = 'Required argument that indicates the start time of the video')
+parser.add_argument('--Filter_start_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the Clusters should be run')
+parser.add_argument('--Filter_end_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the Clusters should be run')
 
 # Parameters for calculating HMM 
 parser.add_argument('--HMM_blocksize', type = int, default = 5, help = 'Blocksize (in minutes) to decompress video for hmm analysis')
-parser.add_argument('--HMM_mean_window', type = float, default = 120, help = 'Number of seconds to calculate mean over for filtering out large pixel changes for hmm analysis')
+parser.add_argument('--HMM_mean_window', type = int, default = 120, help = 'Number of seconds to calculate mean over for filtering out large pixel changes for hmm analysis')
 parser.add_argument('--HMM_mean_filter', type = float, default = 7.5, help = 'Grayscale change in pixel value for filtering out large pixel changes for hmm analysis')
 parser.add_argument('--HMM_window', type = int, default = 10, help = 'Used to reduce the number of states for hmm analysis')
 parser.add_argument('--HMM_seconds_to_change', type = float, default =1800, help = 'Used to determine probablility of state transition in hmm analysis')
@@ -165,3 +180,6 @@ parser.add_argument('--HMM_non_transition_bins', type = float, default = 2, help
 parser.add_argument('--HMM_std', type = float, default = 100, help = 'Standard deviation of pixel data in hmm analysis')
 
 args = parser.parse_args()
+
+hmm_obj = HMM_calculator(args)
+hmm_obj.calculateHMM()

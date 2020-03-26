@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
 parser.add_argument('--Rowfile', type = str, required = True, help = 'The name of the numpy file that will be analyzed')
-parser.add_argument('--HMM_mean_window', type = float, default = 120, help = 'Number of seconds to calculate mean over for filtering out large pixel changes for hmm analysis')
+parser.add_argument('--HMM_mean_window', type = int, default = 120, help = 'Number of seconds to calculate mean over for filtering out large pixel changes for hmm analysis')
 parser.add_argument('--HMM_mean_filter', type = float, default = 7.5, help = 'Grayscale change in pixel value for filtering out large pixel changes for hmm analysis')
 parser.add_argument('--HMM_window', type = int, default = 10, help = 'Used to reduce the number of states for hmm analysis')
 parser.add_argument('--HMM_seconds_to_change', type = float, default =1800, help = 'Used to determine probablility of state transition in hmm analysis')

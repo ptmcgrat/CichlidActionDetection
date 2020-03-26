@@ -16,7 +16,6 @@ height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
 ad = np.empty(shape = (height, width, args.LastTime - args.FirstTime), dtype = 'uint8')
-
 count = 0
 for i in range(args.FirstTime, args.LastTime):
 	cap.set(cv2.CAP_PROP_POS_FRAMES, int(i*args.Framerate))
@@ -29,6 +28,5 @@ for i in range(args.FirstTime, args.LastTime):
 		ad[:,:,count] =  0.2125 * frame[:,:,2] + 0.7154 * frame[:,:,1] + 0.0721 * frame[:,:,0] #opencv does bgr instead of rgb
 	count += 1
 cap.release()
-
 np.save(args.OutFile, ad)
 assert(count == ad.shape[2])

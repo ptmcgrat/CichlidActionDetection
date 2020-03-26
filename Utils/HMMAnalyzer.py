@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import sys, pdb
+import sys, pdb, datetime
 
 class HMMAnalyzer:
 	def __init__(self, filebase):
@@ -12,28 +12,38 @@ class HMMAnalyzer:
 			for line in f:
 				if line.rstrip() != '':
 					data, value = line.rstrip().split(': ')
-					value = int(value)
 					if data == 'Width':
 						self.width = int(value)
 					if data == 'Height':
 						self.height = int(value)
 					if data == 'Frames':
 						self.frames = int(value)
-					if data == 'Resolution':
-						self.resolution = (value)
-			
+					if data == 'FrameRate':
+						self.resolution = float(value)
+					if data == 'Video_start_time':
+						self.videoStart = datetime.datetime.fromisoformat(value)
+					if data == 'Filter_start_time':
+						self.filterStartTime = datetime.datetime.fromisoformat(value)
+					if data == 'Filter_end_time':
+						self.filterStopTime = datetime.datetime.fromisoformat(value)
+					if data == 'Filter_start_frame':
+						self.filterStartFrame = int(value)
+					if data == 'Filter_end_frame':
+						self.filterStopFrame = int(value)
+
 		self.t = None
 		#self.l_diff = None
 		#self.abs_stop = None
 		#self.current_count = 0
 
-	def retDBScanMatrix(self, minMagnitude = 0, densityFilter = 1):
+	def retDBScanMatrix(self, densityFilter = 1):
 		# This function creates a matrix that can be used by DBScan to cluster points
 		#minMagnitude is the size of the color change for a pixel to need to have
 		#densityFilter filters out time points that have to many changes occur across the frame (1 = 1% of all pixels)
 
 		#print('DBScanMatrixCreation: ' + str(self.data.shape[0] - self.width*self.height) + ' raw transitions are found in the entire video', file = sys.stderr)
 		
+		pdb.set_trace()
 		#Threshold out timepoints that have too many changes
 		time, counts = np.unique(self.data[:,0], return_counts = True)
 		threshold = counts[0]*densityFilter/100 # This excludes frames where too many pixels are changing in a frame (i.e. lighting changes)
@@ -41,7 +51,7 @@ class HMMAnalyzer:
 
 		allCoords = self.data[~np.isin(self.data[:,0], badTimes)][:,[0,3,4,5]].astype('uint64')
 			
-		allCoords = allCoords[allCoords[:,3] > minMagnitude].copy()
+		allCoords = allCoords[allCoords[:,3]].copy()
 		#print('DBScanMatrixCreation: ' + str(allCoords.shape[0]) + ' HMM transitions passed magnitude and density filtering criteria', file = sys.stderr)
 		return allCoords
 

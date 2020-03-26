@@ -1,4 +1,4 @@
-import argparse, subprocess, datetime, os
+import argparse, subprocess, datetime, os, pdb
 
 parser = argparse.ArgumentParser(description='This script identifies regions of a large video that contains sand manipulation events')
 # Input data
@@ -18,13 +18,14 @@ parser.add_argument('--ML_frames_directory', type = str, required = True, help =
 parser.add_argument('--ML_videos_directory', type = str, required = True, help = 'Name of directory to hold videos to annotate for machine learning purposes')
 
 # Parameters to filter when HMM is run on
-parser.add_argument('--Video_start_time', type=datetime.datetime.fromisoformat, required = True, help = 'Optional argument that indicates the start time of the video')
-parser.add_argument('--HMM_start_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the HMM should be run')
-parser.add_argument('--HMM_end_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the HMM should be run')
+parser.add_argument('--VideoID', type=str, required = True, help = 'Required argument that gives a short ID for the video')
+parser.add_argument('--Video_start_time', type=datetime.datetime.fromisoformat, required = True, help = 'Required argument that indicates the start time of the video')
+parser.add_argument('--Filter_start_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the Clusters should be run')
+parser.add_argument('--Filter_end_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the Clusters should be run')
 
 # Parameters for calculating HMM 
 parser.add_argument('--HMM_blocksize', type = int, default = 5, help = 'Blocksize (in minutes) to decompress video for hmm analysis')
-parser.add_argument('--HMM_mean_window', type = float, default = 120, help = 'Number of seconds to calculate mean over for filtering out large pixel changes for hmm analysis')
+parser.add_argument('--HMM_mean_window', type = int, default = 120, help = 'Number of seconds to calculate mean over for filtering out large pixel changes for hmm analysis')
 parser.add_argument('--HMM_mean_filter', type = float, default = 7.5, help = 'Grayscale change in pixel value for filtering out large pixel changes for hmm analysis')
 parser.add_argument('--HMM_window', type = int, default = 10, help = 'Used to reduce the number of states for hmm analysis')
 parser.add_argument('--HMM_seconds_to_change', type = float, default =1800, help = 'Used to determine probablility of state transition in hmm analysis')
@@ -35,7 +36,9 @@ parser.add_argument('--HMM_std', type = float, default = 100, help = 'Standard d
 parser.add_argument('--Cl_min_magnitude', type = int, default = 0, help = 'Transition magnitude to be included in cluster analysis')
 parser.add_argument('--Cl_tree_radius', type = int, default = 22, help = 'Tree radius for cluster analysis')
 parser.add_argument('--Cl_leaf_num', type = int, default = 190, help = 'Leaf num for cluster analysis')
-parser.add_argument('--Cl_neighbor_radius', type = int, default = 22, help = 'Tree radius for cluster analysis')
+parser.add_argument('--Cl_timescale', type = int, default = 22, help = 'Tree radius for cluster analysis')
+
+#parser.add_argument('--Cl_neighbor_radius', type = int, default = 22, help = 'Tree radius for cluster analysis')
 parser.add_argument('--Cl_eps', type = int, default = 18, help = 'Eps for cluster analysis')
 parser.add_argument('--Cl_min_points', type = int, default = 90, help = 'Minimum number of points to create cluster')
 parser.add_argument('--Cl_hours_in_batch', type = float, default = 1.0, help = 'Number of hours to calculate cluster per batch')
@@ -69,8 +72,9 @@ def check_args(args):
 	else:
 		if args.HMM_temp_directory[-1] != '/':
 			args.HMM_temp_directory += '/'
-		if not os.path.exists(args.HMM_temp_directory):
-			os.makedirs(args.HMM_temp_directory)
+		if os.path.exists(args.HMM_temp_directory):
+			subprocess.run(['rm','-rf', args.HMM_temp_directory])
+		os.makedirs(args.HMM_temp_directory)
 		if args.Cl_videos_directory[-1] != '/':
 			args.Cl_videos_directory += '/'
 		if not os.path.exists(args.Cl_videos_directory):
@@ -85,8 +89,7 @@ def check_args(args):
 			os.makedirs(args.ML_videos_directory)
 
 		for ofile in [args.HMM_filename, args.HMM_transition_filename, args.Cl_labeled_transition_filename, args.Cl_labeled_cluster_filename]:
-			odir = ofile.split(ofile.split('/')[0])[0]
-			print(ofile + ' ' + odir)
+			odir = ofile.split(ofile.split('/')[-1])[0]
 			if not os.path.exists(odir) and odir != '':
 				os.makedirs(odir)
 
@@ -95,7 +98,7 @@ check_args(args)
 # Filter out HMM related arguments
 HMM_args = {}
 for key, value in vars(args).items():
-	if 'HMM' in key or 'Video' in key or 'Movie' in key or 'Num' in key: 
+	if 'HMM' in key or 'Video' in key or 'Movie' in key or 'Num' in key or 'Filter' in key: 
 		if value is not None:
 			HMM_args[key] = value
 
@@ -103,5 +106,20 @@ HMM_command = ['python3', 'Utils/calculateHMM.py']
 for key, value in HMM_args.items():
 	HMM_command.extend(['--' + key, str(value)])
 
-#subprocess.run(HMM_command)
+#print(HMM_command)
+subprocess.run(HMM_command)
+
+cluster_args = {}
+for key, value in vars(args).items():
+	if 'HMM' not in key or 'filename' in key: 
+		if value is not None:
+			cluster_args[key] = value
+
+
+cluster_command = ['python3', 'Utils/calculateClusters.py']
+for key, value in cluster_args.items():
+	cluster_command.extend(['--' + key, str(value)])
+#subprocess.run(cluster_command)
+
+
 
