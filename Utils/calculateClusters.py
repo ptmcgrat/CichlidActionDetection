@@ -161,6 +161,8 @@ class Cluster_calculator:
 			
 			outAllHMM.release()
 
+			print(outName_in)
+			print(outName_out)
 			subprocess.call(['cp', outName_in, outName_out])
 			assert(os.path.exists(outName_out))
 		cap.release()
@@ -169,7 +171,7 @@ class Cluster_calculator:
 		print('  Creating frames for manual labeling,,Time: ' + str(datetime.datetime.now())) 
 
 		# Create frames for manual labeling
-		cap = cv2.VideoCapture(self.videofile)
+		cap = cv2.VideoCapture(self.args.Movie_file)
 
 		first_frame = 0
 		if self.videoObj.startTime < self.lightsOnTime:
