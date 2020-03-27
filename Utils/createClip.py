@@ -11,7 +11,7 @@ args = parser.parse_args()
 
 #print(args.Outfile)
 #print(args.Outfile.split('/')[-1].replace('.mp4','').split('__'))
-projectID, videoID, LID, N, t, x, y = args.Outfile.split('/')[-1].replace('.mp4','').split('__')
+videoID, LID, N, t, x, y = args.Outfile.split('/')[-1].replace('.mp4','').split('__')
 t,x,y = int(t), int(x), int(y)
 
 cap = cv2.VideoCapture(args.Videofile)
