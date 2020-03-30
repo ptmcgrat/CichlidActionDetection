@@ -39,8 +39,7 @@ class Cluster_calculator:
 		
 		# Run data in batches to avoid RAM override
 		sortData = coords[coords[:,0].argsort()][:,0:3] #sort data by time for batch processing, throwing out 4th column (magnitude)
-		numBatches = int(sortData[-1,0]/self.args.Cl_hours_in_batch/3600) + 1 #delta is number of hours to batch together. Can be fraction.
-
+		numBatches = int((sortData[-1,0] - sortData[0,0])/self.args.Cl_hours_in_batch/3600) + 1 #delta is number of hours to batch together. Can be fraction.
 		sortData[:,0] = sortData[:,0]*self.args.Cl_timescale #scale time so that time distances between transitions are comparable to spatial differences
 		labels = np.zeros(shape = (sortData.shape[0],1), dtype = sortData.dtype) # Initialize labels
 
@@ -50,7 +49,7 @@ class Cluster_calculator:
 		for i in range(numBatches):
 			print(str(i) + ',', end = '', flush = True)
 
-			min_time, max_time = i*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600, (i+1)*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600 # Have to deal with rescaling of time. 3600 = # seconds in an hour
+			min_time, max_time = sortData[0,0] + i*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600, sortData[0,0] + (i+1)*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600 # Have to deal with rescaling of time. 3600 = # seconds in an hour
 			hour_range = np.where((sortData[:,0] > min_time) & (sortData[:,0] <= max_time))
 			min_index, max_index = hour_range[0][0], hour_range[0][-1] + 1
 			X = NearestNeighbors(radius=self.args.Cl_tree_radius, metric='minkowski', p=2, algorithm='kd_tree',leaf_size=self.args.Cl_leaf_num,n_jobs=int(self.workers/2)).fit(sortData[min_index:max_index])
@@ -161,8 +160,6 @@ class Cluster_calculator:
 			
 			outAllHMM.release()
 
-			print(outName_in)
-			print(outName_out)
 			subprocess.call(['cp', outName_in, outName_out])
 			assert(os.path.exists(outName_out))
 		cap.release()
@@ -174,24 +171,30 @@ class Cluster_calculator:
 		cap = cv2.VideoCapture(self.args.Movie_file)
 
 		first_frame = 0
-		if self.videoObj.startTime < self.lightsOnTime:
-			first_frame = int((self.args.Filter_start_time - self.args.Video_start_time).total_seconds()*self.framerate)
-			last_frame = first_frame + int((self.args.Filter_end_time - self.args.Filter_start_time).total_seconds()*self.framerate)
+		if self.args.Filter_start_time is not None:
+			if self.args.Video_start_time < self.args.Filter_start_time:
+				first_frame = int((self.args.Filter_start_time - self.args.Video_start_time).total_seconds()*self.framerate)
+				last_frame = first_frame + int((self.args.Filter_end_time - self.args.Filter_start_time).total_seconds()*self.framerate)
+			else:
+				first_frame = 0
+				last_frame = int((self.args.Filter_end_time - self.args.Video_start_time).total_seconds()*self.framerate)
 		else:
-			first_frame = 0
-			last_frame = int((self.args.Filter_end_time - self.args.Video_start_time).total_seconds()*self.framerate)
-
+			first_frame =0
+			last_frame = self.frames
 		last_frame = min(self.frames, last_frame)
-
+		created_frames = set()
 		for i in range(int(self.args.ML_frames_number)):
 			try:
 				frameIndex = random.randint(first_frame, last_frame)
+				while frameIndex in created_frames:
+					frameIndex = random.randint(first_frame, last_frame)
 			except ValueError:
-				print('Error with frameIndex: ' + self.lp.projectID + ',,' + self.videofile, file = sys.stderr)
+				print('Error with frameIndex: ', file = sys.stderr)
 				break
 			cap.set(cv2.CAP_PROP_POS_FRAMES, frameIndex)
 			ret, frame = cap.read()
-			cv2.imwrite(self.args.ML_frames_directory + self.args.VideoID + '_' + str(frameIndex) + '.jpg', frame)     # save frame as JPEG file      
+			a = cv2.imwrite(self.args.ML_frames_directory + self.args.VideoID + '_' + str(frameIndex) + '.jpg', frame)     # save frame as JPEG file
+			created_frames.add(frameIndex)
 			#cv2.imwrite(self.projFileManager.localManualLabelFramesDir[:-1] + '_pngs/' + self.lp.projectID + '_' + self.videoObj.baseName + '_' + str(frameIndex) + '.png', frame)     # save frame as PNG file      
 
  
@@ -217,7 +220,7 @@ parser.add_argument('--VideoID', type=str, required = True, help = 'Alternative 
 parser.add_argument('--Cl_min_magnitude', type = int, default = 0, help = 'Transition magnitude to be included in cluster analysis')
 parser.add_argument('--Cl_tree_radius', type = int, default = 22, help = 'Tree radius for cluster analysis')
 parser.add_argument('--Cl_leaf_num', type = int, default = 190, help = 'Leaf num for cluster analysis')
-parser.add_argument('--Cl_timescale', type = int, default = 22, help = 'Tree radius for cluster analysis')
+parser.add_argument('--Cl_timescale', type = int, default = 10, help = 'Tree radius for cluster analysis')
 parser.add_argument('--Cl_eps', type = int, default = 18, help = 'Eps for cluster analysis')
 parser.add_argument('--Cl_min_points', type = int, default = 90, help = 'Minimum number of points to create cluster')
 parser.add_argument('--Cl_hours_in_batch', type = float, default = 1.0, help = 'Number of hours to calculate cluster per batch')

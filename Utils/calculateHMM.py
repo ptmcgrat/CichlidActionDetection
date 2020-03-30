@@ -1,4 +1,4 @@
-import argparse, os, cv2, math, datetime, subprocess, pdb
+import argparse, os, cv2, math, datetime, subprocess, pdb, sys
 import numpy as np
 from HMMAnalyzer import HMMAnalyzer as HA
 
@@ -15,9 +15,9 @@ class HMM_calculator:
 					self.row_command_arguments.extend(['--' + key, str(value)])
 
 	def calculateHMM(self):
-		#self._validateVideo()
-		#self._decompressVideo()
-		#self._calculateHMM()
+		self._validateVideo()
+		self._decompressVideo()
+		self._calculateHMM()
 		self._createCoordinateFile()
 
 	def _validateVideo(self):
@@ -27,12 +27,12 @@ class HMM_calculator:
 		self.framerate = int(cap.get(cv2.CAP_PROP_FPS))
 		self.frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-		if self.args.Filter_start_time is not None:
-			self.start_time = int((self.args.Filter_start_time - self.self.args.Video_start_time).total_seconds())
+		if self.args.Filter_start_time is not None and self.args.Filter_start_time > self.args.Video_start_time:
+			self.start_time = int((self.args.Filter_start_time - self.args.Video_start_time).total_seconds())
 		else:
 			self.start_time = 0
 		if self.args.Filter_end_time is not None:
-			self.stop_time = int((self.args.Filter_end_time - self.self.args.Video_start_time).total_seconds())
+			self.stop_time = int((self.args.Filter_end_time - self.args.Video_start_time).total_seconds())
 		else:
 			self.stop_time = int(self.frames/self.framerate) - 1
 
@@ -140,6 +140,13 @@ class HMM_calculator:
 			for key, value in vars(self.args).items():
 				if value is not None:
 					print(key + ': ' + str(value), file = f)
+			print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
+			print('NumpyVersion: ' + np.__version__, file = f)
+			import hmmlearn
+			print('HMMLearnVersion: ' + hmmlearn.__version__, file = f)
+			import scipy
+			print('ScipyVersion: ' + scipy.__version__, file = f)
+			print('OpenCVVersion: ' + cv2.__version__, file = f)
 
 	def _createCoordinateFile(self):
 		print('  Creating coordinate file from HMM transitions,,Time: ' + str(datetime.datetime.now())) 

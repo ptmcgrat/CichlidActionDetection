@@ -1,9 +1,10 @@
-import argparse, subprocess, datetime, os, pdb
+import argparse, subprocess, datetime, os, pdb, sys
 
 parser = argparse.ArgumentParser(description='This script identifies regions of a large video that contains sand manipulation events')
 # Input data
 parser.add_argument('--Movie_file', type = str, required = True, help = 'Name of movie file to analyze. Must be .mp4 video')
-parser.add_argument('--Num_workers', type = int, default = 0, help = 'Transition magnitude to be included in cluster analysis')
+parser.add_argument('--Num_workers', type = int, default = 0, help = 'Number of threads to run')
+parser.add_argument('--Log', type = str, required = True, help = 'Log file to keep track of versions + parameters used')
 
 # Temp directories that wlil be deleted at the end of the analysis
 parser.add_argument('--HMM_temp_directory', type = str, required = True, help = 'Location for temp files to be stored. Should not be in a location that is automatically synced (e.g. Dropbox folder)')
@@ -36,7 +37,7 @@ parser.add_argument('--HMM_std', type = float, default = 100, help = 'Standard d
 parser.add_argument('--Cl_min_magnitude', type = int, default = 0, help = 'Transition magnitude to be included in cluster analysis')
 parser.add_argument('--Cl_tree_radius', type = int, default = 22, help = 'Tree radius for cluster analysis')
 parser.add_argument('--Cl_leaf_num', type = int, default = 190, help = 'Leaf num for cluster analysis')
-parser.add_argument('--Cl_timescale', type = int, default = 22, help = 'Tree radius for cluster analysis')
+parser.add_argument('--Cl_timescale', type = int, default = 10, help = 'Tree radius for cluster analysis')
 
 #parser.add_argument('--Cl_neighbor_radius', type = int, default = 22, help = 'Tree radius for cluster analysis')
 parser.add_argument('--Cl_eps', type = int, default = 18, help = 'Eps for cluster analysis')
@@ -88,12 +89,30 @@ def check_args(args):
 		if not os.path.exists(args.ML_videos_directory):
 			os.makedirs(args.ML_videos_directory)
 
-		for ofile in [args.HMM_filename, args.HMM_transition_filename, args.Cl_labeled_transition_filename, args.Cl_labeled_cluster_filename]:
+		for ofile in [args.HMM_filename, args.HMM_transition_filename, args.Cl_labeled_transition_filename, args.Cl_labeled_cluster_filename, args.Log]:
 			odir = ofile.split(ofile.split('/')[-1])[0]
 			if not os.path.exists(odir) and odir != '':
 				os.makedirs(odir)
 
 check_args(args)
+
+with open(args.Log, 'w') as f:
+	for key, value in vars(args).items():
+		print(key + ': ' + str(value), file = f)
+	print('PythonVersion: ' + sys.version.replace('\n', ' '), file = f)
+	import pandas as pd
+	print('PandasVersion: ' + pd.__version__, file = f)
+	import numpy as np
+	print('NumpyVersion: ' + np.__version__, file = f)
+	import hmmlearn
+	print('HMMLearnVersion: ' + hmmlearn.__version__, file = f)
+	import scipy
+	print('ScipyVersion: ' + scipy.__version__, file = f)
+	import cv2
+	print('OpenCVVersion: ' + cv2.__version__, file = f)
+	import sklearn
+	print('SkLearnVersion: ' + sklearn.__version__, file = f)
+
 
 # Filter out HMM related arguments
 HMM_args = {}
@@ -106,14 +125,15 @@ HMM_command = ['python3', 'Utils/calculateHMM.py']
 for key, value in HMM_args.items():
 	HMM_command.extend(['--' + key, str(value)])
 
-#print(HMM_command)
-subprocess.run(HMM_command)
+print(HMM_command)
+#subprocess.run(HMM_command)
 
 cluster_args = {}
 for key, value in vars(args).items():
-	if 'HMM' not in key or 'filename' in key: 
-		if value is not None:
-			cluster_args[key] = value
+	if 'HMM' not in key or 'filename' in key:
+		if key != 'Log':
+			if value is not None:
+				cluster_args[key] = value
 
 
 cluster_command = ['python3', 'Utils/calculateClusters.py']
