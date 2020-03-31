@@ -2,7 +2,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.neighbors import radius_neighbors_graph
 from sklearn.neighbors import NearestNeighbors
 
-from Modules.DataObjects.HMMAnalyzer import HMMAnalyzer as HA
+from Utils.HMMAnalyzer import HMMAnalyzer as HA
 
 import numpy as np
 import pandas as pd
