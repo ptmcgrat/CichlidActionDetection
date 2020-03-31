@@ -1,6 +1,7 @@
 import subprocess, os
 
-subprocess.run(['rclone', 'copy', 'cichlidVideo:McGrath/Apps/CichlidPiData/__TestData/15_minute_clip.mp4', os.getenv('HOME') + '/Temp/'])
+# subprocess.run(['rclone', 'copy', 'cichlidVideo:McGrath/Apps/CichlidPiData/__TestData/15_minute_clip.mp4', os.getenv('HOME') + '/Temp/'])
+subprocess.run(['rclone', 'copy', 'cichlidVideo:BioSci-McGrath/Apps/CichlidPiData/__TestData/15_minute_clip.mp4', os.getenv('HOME') + '/Temp/'])
 
 args = ['python3', 'VideoFocus.py']
 args.extend(['--Movie_file', os.getenv('HOME') + '/Temp/15_minute_clip.mp4'])
@@ -17,9 +18,10 @@ args.extend(['--ML_videos_directory', os.getenv('HOME') + '/Temp/TestHMM/MLClips
 args.extend(['--Video_start_time', '2018-05-12 08:03:20.913025'])
 args.extend(['--VideoID', '15_minute_clip'])
 
-#subprocess.run(args)
+subprocess.run(args)
 
 #subprocess.run(['rclone', 'copy', 'cichlidVideo:McGrath/Apps/CichlidPiData/MC6_5/Videos/0002_vid.mp4', os.getenv('HOME') + '/Temp/'])
+#subprocess.run(['rclone', 'copy', 'cichlidVideo:BioSci-McGrath/Apps/CichlidPiData/MC6_5/Videos/0002_vid.mp4', os.getenv('HOME') + '/Temp/'])
 
 args = ['python3', 'VideoFocus.py']
 args.extend(['--Movie_file', os.getenv('HOME') + '/Temp/0002_vid.mp4'])
@@ -38,4 +40,4 @@ args.extend(['--Filter_start_time', '2018-05-12 08:00:00'])
 args.extend(['--Filter_end_time', '2018-05-12 18:00:00'])
 args.extend(['--VideoID', 'MC6_5-0002_vid'])
 
-subprocess.run(args)
+# subprocess.run(args)
