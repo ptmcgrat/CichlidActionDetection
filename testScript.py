@@ -1,5 +1,6 @@
 import subprocess, os
 
+# subprocess.run(['rclone', 'copy', 'cichlidVideo:McGrath/Apps/CichlidPiData/__TestData/15_minute_clip.mp4', os.getenv('HOME') + '/Temp/'])
 subprocess.run(['rclone', 'copy', 'cichlidVideo:BioSci-McGrath/Apps/CichlidPiData/__TestData/15_minute_clip.mp4', os.getenv('HOME') + '/Temp/'])
 
 args = ['python3', 'VideoFocus.py']
@@ -19,6 +20,7 @@ args.extend(['--VideoID', '15_minute_clip'])
 
 subprocess.run(args)
 
+#subprocess.run(['rclone', 'copy', 'cichlidVideo:McGrath/Apps/CichlidPiData/MC6_5/Videos/0002_vid.mp4', os.getenv('HOME') + '/Temp/'])
 #subprocess.run(['rclone', 'copy', 'cichlidVideo:BioSci-McGrath/Apps/CichlidPiData/MC6_5/Videos/0002_vid.mp4', os.getenv('HOME') + '/Temp/'])
 
 args = ['python3', 'VideoFocus.py']

@@ -139,7 +139,7 @@ for key, value in vars(args).items():
 cluster_command = ['python3', 'Utils/calculateClusters.py']
 for key, value in cluster_args.items():
 	cluster_command.extend(['--' + key, str(value)])
-# subprocess.run(cluster_command)
+subprocess.run(cluster_command)
 
 
 
