@@ -1,6 +1,6 @@
 import argparse, os, cv2, math, datetime, subprocess, pdb, sys
 import numpy as np
-from Utils.HMMAnalyzer import HMMAnalyzer as HA
+from HMMAnalyzer import HMMAnalyzer as HA
 
 class HMM_calculator:
 	def __init__(self, args):
