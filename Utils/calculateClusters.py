@@ -5,7 +5,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import radius_neighbors_graph
 from sklearn.neighbors import NearestNeighbors
-from Utils.HMMAnalyzer import HMMAnalyzer as HA
+from HMMAnalyzer import HMMAnalyzer as HA
 
 
 class Cluster_calculator:
