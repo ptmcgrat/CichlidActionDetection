@@ -112,6 +112,9 @@ with open(args.Log, 'w') as f:
 	print('OpenCVVersion: ' + cv2.__version__, file = f)
 	import sklearn
 	print('SkLearnVersion: ' + sklearn.__version__, file = f)
+	print('Username: ' + os.getenv('USER'), file = f)
+	print('Nodename: ' + os.uname().nodename, file = f)
+	print('DateAnalyzed: ' + str(datetime.datetime.now()), file = f)
 
 
 # Filter out HMM related arguments
