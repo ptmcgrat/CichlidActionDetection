@@ -48,7 +48,6 @@ class Cluster_calculator:
 		print('   ' + str(numBatches) + ' total batches. On batch: ', end = '', flush = True)
 		for i in range(numBatches):
 			print(str(i) + ',', end = '', flush = True)
-			pdb.set_trace()
 			min_time, max_time = sortData[0,0] + i*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600, sortData[0,0] + (i+1)*self.args.Cl_hours_in_batch*self.args.Cl_timescale*3600 # Have to deal with rescaling of time. 3600 = # seconds in an hour
 			hour_range = np.where((sortData[:,0] > min_time) & (sortData[:,0] <= max_time))
 			min_index, max_index = hour_range[0][0], hour_range[0][-1] + 1
