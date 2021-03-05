@@ -1,4 +1,4 @@
-import argparse, cv2, random, pdb, datetime, subprocess, os, sys
+import argparse, cv2, random, pdb, datetime, subprocess, os, sys, warnings
 import numpy as np
 import pandas as pd
 from multiprocessing.dummy import Pool as ThreadPool
@@ -7,6 +7,7 @@ from sklearn.neighbors import radius_neighbors_graph
 from sklearn.neighbors import NearestNeighbors
 from HMMAnalyzer import HMMAnalyzer as HA
 
+warnings.filterwarnings('ignore')
 
 class Cluster_calculator:
 	def __init__(self, args):
