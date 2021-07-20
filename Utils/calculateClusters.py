@@ -101,7 +101,7 @@ class Cluster_calculator:
 			else:
 				clusterData.loc[clusterData.index == LID,'ClipCreated'] = 'Yes'
 				if x - delta_xy_ml < 0 or x + delta_xy_ml >= self.height or y - delta_xy_ml < 0 or y + delta_xy_ml >= self.width:
-
+					continue
 				if N < self.args.ML_videos_small_limit:
 					if smallClips > self.args.ML_videos_number/20:
 						continue
