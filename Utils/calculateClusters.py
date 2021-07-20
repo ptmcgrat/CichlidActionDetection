@@ -116,7 +116,7 @@ class Cluster_calculator:
 	def _createAnnotationVideos(self):
 		hmmObj = HA(self.args.HMM_filename)
 		delta_xy = self.args.ML_videos_delta_xy
-		delta_xy_ml = self.args.ML_label_manuallabel_delta_xy 
+		delta_xy_ml = self.args.ML_videos_manuallabel_delta_xy 
 		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
 
 		print('  Creating ' + str(len(self.clusterData[self.clusterData.ClipCreated == 'Yes'])) + ' small video clips for classification using ' + str(self.workers) + ',,Time: ' + str(datetime.datetime.now())) 
