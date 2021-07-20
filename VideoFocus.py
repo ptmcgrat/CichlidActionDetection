@@ -48,7 +48,7 @@ parser.add_argument('--Cl_hours_in_batch', type = float, default = 1.0, help = '
 parser.add_argument('--ML_frames_number', type = int, default = 50, help = 'Number of frames to create to annotate for machine learning purposes')
 parser.add_argument('--ML_videos_number', type = int, default = 50, help = 'Number of videos to create annotate for machine learning purposes')
 parser.add_argument('--ML_videos_delta_xy', type = int, default = 60, help = '1/2 x and y size of each ml video created (in pixels)')
-parser.add_argument('--ML_label_manuallabel_delta_xy', type = int, default = 100, help = '1/2 x and y size of each ml video created (in pixels)')
+parser.add_argument('--ML_videos_manuallabel_delta_xy', type = int, default = 100, help = '1/2 x and y size of each ml video created (in pixels)')
 parser.add_argument('--ML_videos_delta_t', type = float, default = 2, help = '1/2 of t size of each ml video created (in seconds)')
 parser.add_argument('--ML_videos_small_limit', type = int, default = 500, help = 'To prevent too many small videos to be used for manual labeling')
 
