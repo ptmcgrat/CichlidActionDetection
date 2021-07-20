@@ -87,7 +87,7 @@ class Cluster_calculator:
 		# Identify clusters to make clips for
 		#self._print('Identifying clusters to make clips for', log = False)
 		delta_xy = self.args.ML_videos_delta_xy
-		delta_xy_ml = self.args.ML_label_manuallabel_delta_xy 
+		delta_xy_ml = self.args.ML_videos_manuallabel_delta_xy 
 		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
 		smallClips, clipsCreated = 0,0 # keep track of clips with small number of pixel changes
 		for row in clusterData.sample(n = clusterData.shape[0]).itertuples(): # Randomly go through the dataframe
