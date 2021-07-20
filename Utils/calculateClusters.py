@@ -87,6 +87,7 @@ class Cluster_calculator:
 		# Identify clusters to make clips for
 		#self._print('Identifying clusters to make clips for', log = False)
 		delta_xy = self.args.ML_videos_delta_xy
+		delta_xy_ml = self.args.ML_label_manuallabel_delta_xy 
 		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
 		smallClips, clipsCreated = 0,0 # keep track of clips with small number of pixel changes
 		for row in clusterData.sample(n = clusterData.shape[0]).itertuples(): # Randomly go through the dataframe
@@ -99,6 +100,8 @@ class Cluster_calculator:
 			# Check temporal compatability (part b):
 			else:
 				clusterData.loc[clusterData.index == LID,'ClipCreated'] = 'Yes'
+				if x - delta_xy_ml < 0 or x + delta_xy_ml >= self.height or y - delta_xy_ml < 0 or y + delta_xy_ml >= self.width:
+
 				if N < self.args.ML_videos_small_limit:
 					if smallClips > self.args.ML_videos_number/20:
 						continue
@@ -109,12 +112,14 @@ class Cluster_calculator:
 
 		clusterData.to_csv(self.args.Cl_labeled_cluster_filename, sep = ',')
 		self.clusterData = clusterData
+
 	def _createAnnotationVideos(self):
 		hmmObj = HA(self.args.HMM_filename)
 		delta_xy = self.args.ML_videos_delta_xy
+		delta_xy_ml = self.args.ML_label_manuallabel_delta_xy 
 		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
 
-		print('  Creating small video clips for classification,,Time: ' + str(datetime.datetime.now())) 
+		print('  Creating ' + str(len(self.clusterData[self.clusterData.ClipCreated == 'Yes'])) + ' small video clips for classification using ' + str(self.workers) + ',,Time: ' + str(datetime.datetime.now())) 
 
 		# Clip creation is super slow so we do it in parallel
 		self.clusterData = pd.read_csv(self.args.Cl_labeled_cluster_filename, sep = ',', index_col = 'LID')
@@ -155,12 +160,15 @@ class Cluster_calculator:
 				frame[HMMChanges != 0] = [300,125,125]
 				for coord in clusteredPoints: # This can probably be improved to speed up clip generation (get rid of the python loop)
 					frame[coord[0], coord[1]] = [125,125,300]
-				outAllHMM.write(np.concatenate((frame2[x-delta_xy:x+delta_xy, y-delta_xy:y+delta_xy], frame[x-delta_xy:x+delta_xy, y-delta_xy:y+delta_xy]), axis = 1))
-
-			
+				outAllHMM.write(np.concatenate((frame2[x-delta_xy_ml:x+delta_xy_ml, y-delta_xy_ml:y+delta_xy_ml], frame[x-delta_xy_ml:x+delta_xy_ml, y-delta_xy_ml:y+delta_xy_ml]), axis = 1))
+				
 			outAllHMM.release()
 
-			subprocess.call(['cp', outName_in, outName_out])
+
+			command = ['python3', 'Utils/createClip.py', self.args.Movie_file, 
+						outName_out, str(delta_xy_ml), str(delta_t), str(self.framerate)]
+			subprocess.run(command)
+		
 			assert(os.path.exists(outName_out))
 		cap.release()
 
@@ -228,7 +236,8 @@ parser.add_argument('--Cl_hours_in_batch', type = float, default = 1.0, help = '
 # Parameters for outputing video clips and frames for manual analysis and machine learning
 parser.add_argument('--ML_frames_number', type = int, default = 500, help = 'Number of frames to create to annotate for machine learning purposes')
 parser.add_argument('--ML_videos_number', type = int, default = 1200, help = 'Number of videos to create annotate for machine learning purposes')
-parser.add_argument('--ML_videos_delta_xy', type = int, default = 100, help = '1/2 x and y size of each ml video created (in pixels)')
+parser.add_argument('--ML_videos_delta_xy', type = int, default = 60, help = '1/2 x and y size of each ml video created (in pixels)')
+parser.add_argument('--ML_videos_manuallabel_delta_xy', type = int, default = 100, help = '1/2 x and y size of each ml video created (in pixels)')
 parser.add_argument('--ML_videos_delta_t', type = float, default = 2, help = '1/2 of t size of each ml video created (in seconds)')
 parser.add_argument('--ML_videos_small_limit', type = int, default = 500, help = 'To prevent too many small videos to be used for manual labeling')
 
