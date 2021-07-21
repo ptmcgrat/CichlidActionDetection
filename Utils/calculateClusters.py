@@ -119,6 +119,7 @@ class Cluster_calculator:
 
 		cap = cv2.VideoCapture(self.args.Movie_file)
 		dt = self.clusterData[self.clusterData.ClipCreated=='Yes']
+		pdb.set_trace()
 		dt['StartFrame'] = int(dt.t*self.framerate - delta_t)
 		dt['EndFrame'] = int(dt.t*self.framerate + delta_t)
 		dt['OutfilePointer'] = ""
