@@ -160,7 +160,7 @@ class Cluster_calculator:
 
 		# Create clips for each cluster
 		self._createStandardVideos()
-"""		processes = []
+		"""		processes = []
 		for row in self.clusterData[self.clusterData.ClipCreated == 'Yes'].itertuples():
 			LID, N, t, x, y = [str(x) for x in [row.Index, row.N, row.t, row.X, row.Y]]
 			outName = self.args.Cl_videos_directory + row.ClipName + '.mp4'
@@ -171,7 +171,7 @@ class Cluster_calculator:
 				for p in processes:
 					p.communicate()
 				processes = []
-"""
+		"""
 		print('  Creating small video clips for manual labeling,,Time: ' + str(datetime.datetime.now())) 
 
 		# Create video clips for manual labeling - this includes HMM data
