@@ -1,8 +1,5 @@
-import argparse, pdb, cv2, os, subprocess
-psid = os.getpid()
-print(psid)
-subprocess.run(['ps -eL -q 31161 | wc -l'], shell=True)
-print('Starting: ' + str(datetime.datetime.now()) )
+import argparse, pdb, cv2, os, 
+
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
 parser.add_argument('Videofile', type = str, help = 'The name of the video file that will be used to create clips')
 parser.add_argument('Outfile', type = str, help = 'The name of the video file that will be created')

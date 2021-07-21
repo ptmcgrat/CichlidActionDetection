@@ -1,5 +1,9 @@
-import argparse, pdb, cv2, datetime,threading
-cv2.setNumThreads(1)
+import argparse, pdb, cv2, datetime,threading,subprocess
+psid = os.getpid()
+print(psid)
+subprocess.run(['ps -eL -q 31161 | wc -l'], shell=True)
+
+#cv2.setNumThreads(1)
 
 print('Starting: ' + str(cv2.setNumThreads(1)) + ' ' + str(datetime.datetime.now()) )
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
