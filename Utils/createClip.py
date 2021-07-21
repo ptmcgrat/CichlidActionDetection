@@ -1,5 +1,4 @@
 import argparse, pdb, cv2
-cv2.setNumThreads(1)
 
 
 print('Starting: ' + str(datetime.datetime.now()) )
