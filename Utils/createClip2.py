@@ -27,6 +27,7 @@ print('VideoOpened: ' + str(cv2.setNumThreads(1)) + ' '+ str(datetime.datetime.n
 	
 outAll = cv2.VideoWriter(args.Outfile, cv2.VideoWriter_fourcc(*"mp4v"), args.Framerate, (2*args.Delta_xy, 2*args.Delta_xy))
 print('OutvideoCreated: ' + str(cv2.setNumThreads(1)) + ' '+ str(datetime.datetime.now()) )
+subprocess.run(['ps -eL -q 31161 | wc -l'], shell=True)
 
 
 cap.set(cv2.CAP_PROP_POS_FRAMES, int(args.Framerate*(t) - args.Delta_t))
