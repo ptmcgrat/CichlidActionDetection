@@ -3,7 +3,7 @@ psid = os.getpid()
 print(psid)
 subprocess.run(['ps -eL -q ' + str(psid) + ' | wc -l'], shell=True)
 
-#cv2.setNumThreads(1)
+cv2.setNumThreads(1)
 
 print('Starting: ' + str(cv2.setNumThreads(1)) + ' ' + str(datetime.datetime.now()) )
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
