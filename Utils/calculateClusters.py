@@ -153,10 +153,10 @@ class Cluster_calculator:
 		delta_xy_ml = self.args.ML_videos_manuallabel_delta_xy 
 		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
 
-		print('  Creating ' + str(len(self.clusterData[self.clusterData.ClipCreated == 'Yes'])) + ' small video clips for classification using ' + str(self.workers) + ',,Time: ' + str(datetime.datetime.now())) 
 
 		# Clip creation is super slow so we do it in parallel
 		self.clusterData = pd.read_csv(self.args.Cl_labeled_cluster_filename, sep = ',', index_col = 'LID')
+		print('  Creating ' + str(len(self.clusterData[self.clusterData.ClipCreated == 'Yes'])) + ' small video clips for classification using ' + str(self.workers) + ',,Time: ' + str(datetime.datetime.now())) 
 
 		# Create clips for each cluster
 		self._createStandardVideos()
