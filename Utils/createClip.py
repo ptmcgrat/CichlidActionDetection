@@ -1,4 +1,4 @@
-import argparse, pdb, cv2, os, 
+import argparse, pdb, cv2, os 
 
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
 parser.add_argument('Videofile', type = str, help = 'The name of the video file that will be used to create clips')
