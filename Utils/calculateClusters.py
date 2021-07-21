@@ -16,9 +16,9 @@ class Cluster_calculator:
 
 	def calculateClusters(self):
 		self._validateVideo()
-		self._createClusters()
+		#self._createClusters()
 		self._createAnnotationVideos()
-		self._createAnnotationFrames()
+		#self._createAnnotationFrames()
 
 
 	def _validateVideo(self):
@@ -113,6 +113,40 @@ class Cluster_calculator:
 		clusterData.to_csv(self.args.Cl_labeled_cluster_filename, sep = ',')
 		self.clusterData = clusterData
 
+	def _createStandardVideos(self):
+		delta_xy = self.args.ML_videos_delta_xy
+		delta_t = int(self.args.ML_videos_delta_t*self.framerate)
+
+		cap = cv2.VideoCapture(self.args.Movie_file)
+		dt = self.clusterData[self.clusterData.ClipCreated=='Yes']
+		dt['StartFrame'] = int(dt.t*self.framerate - delta_t)
+		dt['EndFrame'] = int(dt.t*self.framerate + delta_t)
+		dt['OutfilePointer'] = ""
+		dt['Active'] = 'No'
+
+		for i in range(self.clusterData.EndFrame.max() + 5):
+			"""
+			for row in dt[dt.StartFrame == i].itertuples():
+				row.Active = 'Yes'
+				row.OutfilePointer = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
+			for row in dt[dt.StartFrame == i].itertuples():
+				row.Active = 'No'
+				row.OutfilePointer.release() 
+			"""
+			activeVideos = dt[dt.Active=='Yes']
+
+			if len(activeVideos) == 0:
+				cap.grab()
+			else:
+				ret, frame = cap.read()
+
+			"""
+			for row in activeVideos.iterturples():
+				row.OutfilePointer.write(frame[row.x-delta_xy:row.x+delta_xy, row.y-delta_xy:row.y+delta_xy])
+			"""
+		cap.release()
+
+
 	def _createAnnotationVideos(self):
 		hmmObj = HA(self.args.HMM_filename)
 		delta_xy = self.args.ML_videos_delta_xy
@@ -125,7 +159,8 @@ class Cluster_calculator:
 		self.clusterData = pd.read_csv(self.args.Cl_labeled_cluster_filename, sep = ',', index_col = 'LID')
 
 		# Create clips for each cluster
-		processes = []
+		self._createStandardVideos()
+"""		processes = []
 		for row in self.clusterData[self.clusterData.ClipCreated == 'Yes'].itertuples():
 			LID, N, t, x, y = [str(x) for x in [row.Index, row.N, row.t, row.X, row.Y]]
 			outName = self.args.Cl_videos_directory + row.ClipName + '.mp4'
@@ -136,7 +171,7 @@ class Cluster_calculator:
 				for p in processes:
 					p.communicate()
 				processes = []
-		
+"""
 		print('  Creating small video clips for manual labeling,,Time: ' + str(datetime.datetime.now())) 
 
 		# Create video clips for manual labeling - this includes HMM data

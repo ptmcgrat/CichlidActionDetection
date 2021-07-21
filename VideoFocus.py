@@ -130,7 +130,7 @@ for key, value in HMM_args.items():
 	HMM_command.extend(['--' + key, str(value)])
 
 print(HMM_command)
-subprocess.run(HMM_command)
+#subprocess.run(HMM_command)
 
 cluster_args = {}
 for key, value in vars(args).items():
