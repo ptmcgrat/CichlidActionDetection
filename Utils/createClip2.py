@@ -22,8 +22,11 @@ videoID, LID, N, t, x, y = args.Outfile.split('/')[-1].replace('.mp4','').split(
 t,x,y = int(t), int(x), int(y)
 
 print('Args parsed: ' + str(cv2.setNumThreads(1)) + ' '+ str(datetime.datetime.now()) )
+subprocess.run(['ps -eL -q ' + str(psid) + ' | wc -l'], shell=True)
+
 cap = cv2.VideoCapture(args.Videofile)
 print('VideoOpened: ' + str(cv2.setNumThreads(1)) + ' '+ str(datetime.datetime.now()) )
+subprocess.run(['ps -eL -q ' + str(psid) + ' | wc -l'], shell=True)
 	
 outAll = cv2.VideoWriter(args.Outfile, cv2.VideoWriter_fourcc(*"mp4v"), args.Framerate, (2*args.Delta_xy, 2*args.Delta_xy))
 print('OutvideoCreated: ' + str(cv2.setNumThreads(1)) + ' '+ str(datetime.datetime.now()) )
