@@ -1,4 +1,6 @@
 import argparse, pdb, cv2
+cv2.setNumThreads(1)
+
 
 print('Starting: ' + str(datetime.datetime.now()) )
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
