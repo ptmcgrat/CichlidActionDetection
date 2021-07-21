@@ -1,4 +1,4 @@
-import argparse, pdb, cv2, datetime
+import argparse, pdb, cv2
 
 print('Starting: ' + str(datetime.datetime.now()) )
 parser = argparse.ArgumentParser(description='This command runs HMM analysis on a single row of data.')
@@ -16,16 +16,12 @@ args = parser.parse_args()
 videoID, LID, N, t, x, y = args.Outfile.split('/')[-1].replace('.mp4','').split('__')
 t,x,y = int(t), int(x), int(y)
 
-print('Args parsed: ' + str(datetime.datetime.now()) )
 cap = cv2.VideoCapture(args.Videofile)
-print('VideoOpened: ' + str(datetime.datetime.now()) )
 	
 outAll = cv2.VideoWriter(args.Outfile, cv2.VideoWriter_fourcc(*"mp4v"), args.Framerate, (2*args.Delta_xy, 2*args.Delta_xy))
-print('OutvideoCreated: ' + str(datetime.datetime.now()) )
 
 
 cap.set(cv2.CAP_PROP_POS_FRAMES, int(args.Framerate*(t) - args.Delta_t))
-print('Set t position: ' + str(datetime.datetime.now()) )
 
 
 for i in range(args.Delta_t*2):
@@ -34,6 +30,5 @@ for i in range(args.Delta_t*2):
 		outAll.write(frame[x-args.Delta_xy:x+args.Delta_xy, y-args.Delta_xy:y+args.Delta_xy])
 	else:
 		print('VideoError: BadFrame for ' + LID)
-print('Reading and writing: ' + str(datetime.datetime.now()) )
 
 outAll.release()
