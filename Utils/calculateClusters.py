@@ -130,7 +130,6 @@ class Cluster_calculator:
 				dt.loc[dt.ClipName == dt.ClipName]['Active'] = 'Yes'
 				dt.loc[dt.ClipName == dt.ClipName]['OutfilePointer'] = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
 			for row in dt[dt.EndFrame == i].itertuples():
-				pdb.set_trace()
 				dt.loc[dt.ClipName == dt.ClipName]['Active'] = 'No'
 				dt.loc[dt.ClipName == dt.ClipName]['OutfilePointer'].release() 
 			
