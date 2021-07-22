@@ -139,6 +139,7 @@ class Cluster_calculator:
 
 			if len(activeVideos) == 0:
 				cap.grab()
+				continue
 			else:
 				ret, frame = cap.read()
 
