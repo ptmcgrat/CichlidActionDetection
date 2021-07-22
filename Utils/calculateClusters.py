@@ -125,14 +125,14 @@ class Cluster_calculator:
 		dt['Active'] = 'No'
 
 		for i in range(dt.EndFrame.max() + 5):
-			"""
+			
 			for row in dt[dt.StartFrame == i].itertuples():
 				row.Active = 'Yes'
 				row.OutfilePointer = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
 			for row in dt[dt.StartFrame == i].itertuples():
 				row.Active = 'No'
 				row.OutfilePointer.release() 
-			"""
+			
 			activeVideos = dt[dt.Active=='Yes']
 
 			if len(activeVideos) == 0:
