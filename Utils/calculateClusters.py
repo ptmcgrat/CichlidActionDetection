@@ -127,7 +127,6 @@ class Cluster_calculator:
 		for i in range(dt.EndFrame.max() + 5):
 			
 			for row in dt[dt.StartFrame == i].itertuples():
-				pdb.set_trace()
 				dt.iloc[row.Index]['Active'] = 'Yes'
 				dt.iloc[row.Index]['OutfilePointer'] = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
 			for row in dt[dt.StartFrame == i].itertuples():
