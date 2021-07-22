@@ -132,7 +132,7 @@ class Cluster_calculator:
 			for row in dt[dt.EndFrame == i].itertuples():
 				dt.loc[dt.ClipName == row.ClipName,'Active'] = 'No'
 				try:
-					dt.loc[dt.ClipName == row.ClipName,'OutfilePointer'][0].release() 
+					dt.loc[dt.ClipName == row.ClipName,'OutfilePointer'].values[0].release() 
 				except KeyError:
 					pdb.set_trace()		
 			activeVideos = dt[dt.Active=='Yes']
