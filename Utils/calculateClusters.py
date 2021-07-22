@@ -144,7 +144,7 @@ class Cluster_calculator:
 				ret, frame = cap.read()
 
 			
-			for row in activeVideos.iterturples():
+			for row in activeVideos.itertuples():
 				row.OutfilePointer.write(frame[row.x-delta_xy:row.x+delta_xy, row.y-delta_xy:row.y+delta_xy])
 			
 		cap.release()
