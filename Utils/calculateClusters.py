@@ -145,6 +145,7 @@ class Cluster_calculator:
 
 			
 			for row in activeVideos.itertuples():
+				pdb.set_trace()
 				row.OutfilePointer.write(frame[row.x-delta_xy:row.x+delta_xy, row.y-delta_xy:row.y+delta_xy])
 			
 		cap.release()
