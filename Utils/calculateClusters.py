@@ -124,7 +124,7 @@ class Cluster_calculator:
 		dt['OutfilePointer'] = ""
 		dt['Active'] = 'No'
 
-		for i in range(self.clusterData.EndFrame.max() + 5):
+		for i in range(dt.EndFrame.max() + 5):
 			"""
 			for row in dt[dt.StartFrame == i].itertuples():
 				row.Active = 'Yes'
