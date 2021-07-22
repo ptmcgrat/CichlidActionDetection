@@ -128,11 +128,11 @@ class Cluster_calculator:
 			
 			for row in dt[dt.StartFrame == i].itertuples():
 				pdb.set_trace()
-				row.Active = 'Yes'
-				row.OutfilePointer = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
+				dt.iloc[row.Index]['Active'] = 'Yes'
+				dt.iloc[row.Index]['OutfilePointer'] = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
 			for row in dt[dt.StartFrame == i].itertuples():
-				row.Active = 'No'
-				row.OutfilePointer.release() 
+				dt.iloc[row.Index]['Active'] = 'No'
+				dt.iloc[row.Index]['OutfilePointer'].release() 
 			
 			activeVideos = dt[dt.Active=='Yes']
 
