@@ -142,10 +142,12 @@ class Cluster_calculator:
 				continue
 			else:
 				ret, frame = cap.read()
-
 			
 			for row in activeVideos.itertuples():
-				row.OutfilePointer.write(frame[row.X-delta_xy:row.X+delta_xy, row.Y-delta_xy:row.Y+delta_xy])
+				try:
+					row.OutfilePointer.write(frame[row.X-delta_xy:row.X+delta_xy, row.Y-delta_xy:row.Y+delta_xy])
+				except TypeError:
+					print('   Bad Frame: ' + str(i))
 			
 		cap.release()
 
