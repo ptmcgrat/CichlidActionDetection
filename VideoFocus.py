@@ -129,7 +129,7 @@ HMM_command = ['python3', 'Utils/calculateHMM.py']
 for key, value in HMM_args.items():
 	HMM_command.extend(['--' + key, str(value)])
 
-print(HMM_command)
+print(HMM_command, flush = True)
 subprocess.run(HMM_command)
 
 cluster_args = {}

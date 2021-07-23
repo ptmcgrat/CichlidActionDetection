@@ -31,7 +31,7 @@ class Cluster_calculator:
 
 
 	def _createClusters(self):
-		print('  Creating clusters from HMM transitions,,Time: ' + str(datetime.datetime.now())) 
+		print('  Creating clusters from HMM transitions,,Time: ' + str(datetime.datetime.now()), flush = True) 
 		# Convert into coords object and save it
 		coords = np.load(self.args.HMM_transition_filename)
 
@@ -60,12 +60,12 @@ class Cluster_calculator:
 			labels[min_index:max_index,0] = sub_label
 			curr_label += new_labels
 
-		print()
+		print(flush = True)
 		# Concatenate and save information
 		sortData[:,0] = sortData[:,0]/self.args.Cl_timescale
 		labeledCoords = np.concatenate((sortData, labels), axis = 1).astype('int64')
 		np.save(self.args.Cl_labeled_transition_filename, labeledCoords)
-		print('  Concatenating and summarizing clusters,,Time: ' + str(datetime.datetime.now())) 
+		print('  Concatenating and summarizing clusters,,Time: ' + str(datetime.datetime.now()), flush = True) 
 
 		df = pd.DataFrame(labeledCoords, columns=['T','X','Y','LID'])
 		clusterData = df.groupby('LID').apply(lambda x: pd.Series({
@@ -147,7 +147,7 @@ class Cluster_calculator:
 				try:
 					row.OutfilePointer.write(frame[row.X-delta_xy:row.X+delta_xy, row.Y-delta_xy:row.Y+delta_xy])
 				except TypeError:
-					print('   Bad Frame: ' + str(i))
+					print('   Bad Frame: ' + str(i), flush = True)
 			
 		cap.release()
 
@@ -161,7 +161,7 @@ class Cluster_calculator:
 
 		# Clip creation is super slow so we do it in parallel
 		self.clusterData = pd.read_csv(self.args.Cl_labeled_cluster_filename, sep = ',', index_col = 'LID')
-		print('  Creating ' + str(len(self.clusterData[self.clusterData.ClipCreated == 'Yes'])) + ' small video clips for classification using ' + str(self.workers) + ',,Time: ' + str(datetime.datetime.now())) 
+		print('  Creating ' + str(len(self.clusterData[self.clusterData.ClipCreated == 'Yes'])) + ' small video clips for classification using ' + str(self.workers) + ',,Time: ' + str(datetime.datetime.now()), flush = True) 
 
 		# Create clips for each cluster
 		self._createStandardVideos()
@@ -177,7 +177,7 @@ class Cluster_calculator:
 					p.communicate()
 				processes = []
 		"""
-		print('  Creating small video clips for manual labeling,,Time: ' + str(datetime.datetime.now())) 
+		print('  Creating small video clips for manual labeling,,Time: ' + str(datetime.datetime.now()), flush = True) 
 
 		# Create video clips for manual labeling - this includes HMM data
 		cap = cv2.VideoCapture(self.args.Movie_file)
@@ -213,7 +213,7 @@ class Cluster_calculator:
 		cap.release()
 
 	def _createAnnotationFrames(self):
-		print('  Creating frames for manual labeling,,Time: ' + str(datetime.datetime.now())) 
+		print('  Creating frames for manual labeling,,Time: ' + str(datetime.datetime.now()), flush = True) 
 
 		# Create frames for manual labeling
 		cap = cv2.VideoCapture(self.args.Movie_file)
@@ -237,7 +237,7 @@ class Cluster_calculator:
 				while frameIndex in created_frames:
 					frameIndex = random.randint(first_frame, last_frame)
 			except ValueError:
-				print('Error with frameIndex: ', file = sys.stderr)
+				print('Error with frameIndex: ', flush = True)
 				break
 			cap.set(cv2.CAP_PROP_POS_FRAMES, frameIndex)
 			ret, frame = cap.read()

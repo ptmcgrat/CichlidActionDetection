@@ -44,7 +44,7 @@ class HMM_calculator:
 		blocksize = self.args.HMM_blocksize*60 # Rename to make code easier to read. 
 
 		totalBlocks = math.ceil(self.HMMsecs/(blocksize)) #Number of blocks that need to be analyzed for the full video
-		print('  HMM_Maker:Decompressing video into 1 second chunks,,Time: ' + str(datetime.datetime.now()))
+		print('  HMM_Maker:Decompressing video into 1 second chunks,,Time: ' + str(datetime.datetime.now()), flush = True)
 		print('    ' + str(totalBlocks) + ' total blocks. On block ', end = '', flush = True)
 		
 		# First decompress mp4 file into managable chunks. One frame per second. blocksize is length of chunks in minutes
@@ -67,7 +67,7 @@ class HMM_calculator:
 				p.communicate()
 		
 		
-		print()
+		print(flush = True)
 
 		# Now combine the chunks together into separate row file. Separating by row keeps filesizes managable
 		print('  Combining data into rowfiles,,Time: ' + str(datetime.datetime.now()))
@@ -100,10 +100,10 @@ class HMM_calculator:
 			for j in range(self.workers):
 				block = i + j
 				subprocess.run(['rm', '-f', self.output_directory + 'Decompressed_' + str(block) + '.npy'])
-		print()
+		print(flush = True)
 	
 	def _calculateHMM(self):
-		print('  Calculating HMMs for each row,,Time: ' + str(datetime.datetime.now())) 
+		print('  Calculating HMMs for each row,,Time: ' + str(datetime.datetime.now()), flush = True) 
 		# Calculate HMM on each block
 
 		print('    ' + str(self.height) + ' total rows. On rows ', end = '', flush = True)
@@ -117,7 +117,7 @@ class HMM_calculator:
 				processes.append(subprocess.Popen(['python3', 'Utils/HMM_row.py', '--Rowfile', self.output_directory + str(row) + '.npy'] + self.row_command_arguments))
 			for p in processes:
 				p.communicate()
-		print()
+		print(flush = True)
 		all_data = []
 		# Concatenate all data together
 		for row in range(self.height):
@@ -149,7 +149,7 @@ class HMM_calculator:
 			print('OpenCVVersion: ' + cv2.__version__, file = f)
 
 	def _createCoordinateFile(self):
-		print('  Creating coordinate file from HMM transitions,,Time: ' + str(datetime.datetime.now())) 
+		print('  Creating coordinate file from HMM transitions,,Time: ' + str(datetime.datetime.now()), flush = True) 
 
 		# Load in HMM data
 		hmmObj = HA(self.args.HMM_filename)
