@@ -7,6 +7,7 @@ class HMM_calculator:
 		self.args = args
 		self.workers = args.Num_workers # Rename to make more readable
 		self.output_directory = self.args.HMM_temp_directory # Rename to make more readable
+		self.framerate = self.args.Video_framerate
 
 		self.row_command_arguments = []
 		for key, value in vars(args).items():
@@ -24,7 +25,6 @@ class HMM_calculator:
 		cap = cv2.VideoCapture(self.args.Movie_file)
 		self.height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 		self.width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-		self.framerate = int(cap.get(cv2.CAP_PROP_FPS))
 		self.frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 		if self.args.Filter_start_time is not None and self.args.Filter_start_time > self.args.Video_start_time:

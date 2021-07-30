@@ -13,6 +13,7 @@ class Cluster_calculator:
 	def __init__(self, args):
 		self.args = args
 		self.workers = args.Num_workers # Rename to make more readable
+		self.framerate = self.args.Video_framerate
 
 	def calculateClusters(self):
 		self._validateVideo()
@@ -25,8 +26,8 @@ class Cluster_calculator:
 		cap = cv2.VideoCapture(self.args.Movie_file)
 		self.height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 		self.width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-		self.framerate = int(cap.get(cv2.CAP_PROP_FPS))
-		print(self.framerate)
+		#self.framerate = int(cap.get(cv2.CAP_PROP_FPS))
+		#print(self.framerate)
 		self.frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 		cap.release()
 
@@ -96,7 +97,7 @@ class Cluster_calculator:
 			if x - delta_xy < 0 or x + delta_xy >= self.height or y - delta_xy < 0 or y + delta_xy >= self.width:
 				continue
 			# Check temporal compatability (part a):
-			elif self.framerate*t - delta_t < 0 or LID == -1:
+			elif self.framerate*t - delta_t < 0 or LID == -1 or self.framerate*t + delta_t > self.frames:
 				continue
 			# Check temporal compatability (part b):
 			else:

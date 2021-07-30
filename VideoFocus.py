@@ -20,6 +20,7 @@ parser.add_argument('--ML_videos_directory', type = str, required = True, help =
 
 # Parameters to filter when HMM is run on
 parser.add_argument('--VideoID', type=str, required = True, help = 'Required argument that gives a short ID for the video')
+parser.add_argument('--Video_framerate', type=float, required = True, help = 'Required argument that indicates the framerate of the video')
 parser.add_argument('--Video_start_time', type=datetime.datetime.fromisoformat, required = True, help = 'Required argument that indicates the start time of the video')
 parser.add_argument('--Filter_start_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the Clusters should be run')
 parser.add_argument('--Filter_end_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the Clusters should be run')
