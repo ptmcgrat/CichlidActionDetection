@@ -17,7 +17,7 @@ class Cluster_calculator:
 
 	def calculateClusters(self):
 		self._validateVideo()
-		#self._createClusters()
+		self._createClusters()
 		self._createAnnotationVideos()
 		self._createAnnotationFrames()
 
