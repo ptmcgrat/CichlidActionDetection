@@ -128,7 +128,7 @@ class Cluster_calculator:
 			
 			for row in dt[dt.StartFrame == i].itertuples():
 				dt.loc[dt.ClipName == row.ClipName,'Active'] = 'Yes'
-				dt.loc[dt.ClipName == row.ClipName,'OutfilePointer'] = cv2.VideoWriter(row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
+				dt.loc[dt.ClipName == row.ClipName,'OutfilePointer'] = cv2.VideoWriter(self.args.Cl-videos_directory + row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
 			for row in dt[dt.EndFrame == i].itertuples():
 				dt.loc[dt.ClipName == row.ClipName,'Active'] = 'No'
 				try:
