@@ -189,7 +189,7 @@ class Cluster_calculator:
 			outName_in = self.args.Cl_videos_directory + clipname + '.mp4'
 			outName_out = self.args.ML_videos_directory + clipname + '.mp4'
 
-			outAllHMM = cv2.VideoWriter(outName_ml, cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (4*delta_xy, 2*delta_xy))
+			outAllHMM = cv2.VideoWriter(outName_ml, cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (4*delta_xy_ml, 2*delta_xy_ml))
 			cap.set(cv2.CAP_PROP_POS_FRAMES, int(self.framerate*(t) - delta_t))
 			HMMChanges = hmmObj.retDifference(self.framerate*(t) - delta_t, self.framerate*(t) + delta_t)
 			clusteredPoints = labeledCoords[labeledCoords[:,3] == LID][:,1:3]
