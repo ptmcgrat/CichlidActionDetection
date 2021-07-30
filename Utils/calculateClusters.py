@@ -26,6 +26,7 @@ class Cluster_calculator:
 		self.height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 		self.width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 		self.framerate = int(cap.get(cv2.CAP_PROP_FPS))
+		print(self.framerate)
 		self.frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 		cap.release()
 
