@@ -16,7 +16,7 @@ class Cluster_calculator:
 
 	def calculateClusters(self):
 		self._validateVideo()
-		self._createClusters()
+		#self._createClusters()
 		self._createAnnotationVideos()
 		self._createAnnotationFrames()
 
@@ -128,6 +128,7 @@ class Cluster_calculator:
 			
 			for row in dt[dt.StartFrame == i].itertuples():
 				dt.loc[dt.ClipName == row.ClipName,'Active'] = 'Yes'
+				pdb.set_trace()
 				dt.loc[dt.ClipName == row.ClipName,'OutfilePointer'] = cv2.VideoWriter(self.args.Cl_videos_directory + row.ClipName + 'mp4', cv2.VideoWriter_fourcc(*"mp4v"), self.framerate, (2*delta_xy, 2*delta_xy))
 			for row in dt[dt.EndFrame == i].itertuples():
 				dt.loc[dt.ClipName == row.ClipName,'Active'] = 'No'
