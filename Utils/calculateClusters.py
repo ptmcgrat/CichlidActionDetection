@@ -13,7 +13,7 @@ class Cluster_calculator:
 	def __init__(self, args):
 		self.args = args
 		self.workers = args.Num_workers # Rename to make more readable
-		self.framerate = self.args.Video_framerate
+		self.framerate = int(self.args.Video_framerate)
 
 	def calculateClusters(self):
 		self._validateVideo()
@@ -265,6 +265,7 @@ parser.add_argument('--Filter_start_time', type=datetime.datetime.fromisoformat,
 parser.add_argument('--Filter_end_time', type=datetime.datetime.fromisoformat, help = 'Optional argument that indicates the start time when the HMM should be run')
 
 parser.add_argument('--VideoID', type=str, required = True, help = 'Alternative ID for video that was analyzed')
+parser.add_argument('--Video_framerate', type=float, required = True, help = 'Required argument that indicates the framerate of the video')
 
 # Parameters for DBSCAN clustering
 parser.add_argument('--Cl_min_magnitude', type = int, default = 0, help = 'Transition magnitude to be included in cluster analysis')

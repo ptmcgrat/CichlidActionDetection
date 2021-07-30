@@ -7,7 +7,7 @@ class HMM_calculator:
 		self.args = args
 		self.workers = args.Num_workers # Rename to make more readable
 		self.output_directory = self.args.HMM_temp_directory # Rename to make more readable
-		self.framerate = self.args.Video_framerate
+		self.framerate = int(self.args.Video_framerate)
 
 		self.row_command_arguments = []
 		for key, value in vars(args).items():
