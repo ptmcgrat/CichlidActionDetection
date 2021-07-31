@@ -42,7 +42,7 @@ class Cluster_calculator:
 		
 		# Run data in batches to avoid RAM override
 		sortData = coords[coords[:,0].argsort()][:,0:3] #sort data by time for batch processing, throwing out 4th column (magnitude)
-		numBatches = int((sortData[-1,0] - sortData[0,0])/self.args.Cl_hours_in_batch/3600) + 1 #delta is number of hours to batch together. Can be fraction.
+		numBatches = int((sortData[-1,0] - sortData[0,0]-1)/self.args.Cl_hours_in_batch/3600) + 1 #delta is number of hours to batch together. Can be fraction.
 		sortData[:,0] = sortData[:,0]*self.args.Cl_timescale #scale time so that time distances between transitions are comparable to spatial differences
 		labels = np.zeros(shape = (sortData.shape[0],1), dtype = sortData.dtype) # Initialize labels
 
