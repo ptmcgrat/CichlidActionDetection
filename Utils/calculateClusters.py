@@ -202,9 +202,9 @@ class Cluster_calculator:
 			for i in range(delta_t*2):
 				ret, frame = cap.read()
 				frame2 = frame.copy()
-				frame[HMMChanges != 0] = [300,125,125]
+				frame[HMMChanges != 0] = [250,125,125]
 				for coord in clusteredPoints: # This can probably be improved to speed up clip generation (get rid of the python loop)
-					frame[coord[0], coord[1]] = [125,125,300]
+					frame[coord[0], coord[1]] = [125,125,250]
 				outAllHMM.write(np.concatenate((frame2[x-delta_xy_ml:x+delta_xy_ml, y-delta_xy_ml:y+delta_xy_ml], frame[x-delta_xy_ml:x+delta_xy_ml, y-delta_xy_ml:y+delta_xy_ml]), axis = 1))
 				
 			outAllHMM.release()
